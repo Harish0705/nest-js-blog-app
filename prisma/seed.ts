@@ -1,27 +1,32 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { PrismaClient } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
 
 // initialize Prisma Client
 const prisma = new PrismaClient();
 
 async function main() {
   // create two dummy users
+  const salt = await bcrypt.genSalt();
+  const passwordSiva = await bcrypt.hash('password-siva', salt);
+  const passwordRam = await bcrypt.hash('password-ram', salt);
   const user1 = await prisma.user.upsert({
-    where: { email: 'sabin@adams.com' },
+    where: { email: 'siva123@gmail.com' },
     update: {},
     create: {
-      email: 'sabin@adams.com',
-      name: 'Sabin Adams',
-      password: 'password-sabin',
+      email: 'siva123@gmail.com',
+      name: 'Siva Raman ',
+      password: passwordSiva,
     },
   });
 
   const user2 = await prisma.user.upsert({
-    where: { email: 'alex@ruheni.com' },
+    where: { email: 'ram123@gmail.com' },
     update: {},
     create: {
-      email: 'alex@ruheni.com',
-      name: 'Alex Ruheni',
-      password: 'password-alex',
+      email: 'ram123@gmail.com',
+      name: 'Rama Krishna',
+      password: passwordRam,
     },
   });
 
@@ -68,7 +73,7 @@ async function main() {
     },
   });
 
-  console.log({ user1, user2, post1, post2, post3 });
+  // console.log({ user1, user2, post1, post2, post3 });
 }
 
 // execute the main function

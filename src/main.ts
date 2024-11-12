@@ -13,6 +13,7 @@ async function bootstrap() {
     .setTitle('Nest Js Blog App')
     .setDescription('Nest Js Blog API description')
     .setVersion('0.1')
+    .addBearerAuth() // for authenticating in swagger
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
