@@ -19,7 +19,12 @@ export class ArticlesService {
   }
 
   async findOne(id: string) {
-    const article = await this.prisma.article.findUnique({ where: { id } });
+    const article = await this.prisma.article.findUnique({
+      where: { id },
+      include: {
+        author: true,
+      },
+    });
     if (!article) {
       throw new NotFoundException(`Article with ${id} does not exist.`);
     }

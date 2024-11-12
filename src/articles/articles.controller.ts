@@ -26,25 +26,29 @@ export class ArticlesController {
   @Post()
   @ApiCreatedResponse({ type: ArticleEntity })
   async create(@Body() createArticleDto: CreateArticleDto) {
-    return await this.articlesService.create(createArticleDto);
-  }
-
-  @Get('drafts')
-  @ApiOkResponse({ type: ArticleEntity, isArray: true })
-  async findDrafts() {
-    return await this.articlesService.findDrafts();
+    return new ArticleEntity(
+      await this.articlesService.create(createArticleDto),
+    );
   }
 
   @Get()
   @ApiOkResponse({ type: ArticleEntity, isArray: true })
   async findAll() {
-    return await this.articlesService.findAll();
+    const articles = await this.articlesService.findAll();
+    return articles.map((article) => new ArticleEntity(article));
+  }
+
+  @Get('drafts')
+  @ApiOkResponse({ type: ArticleEntity, isArray: true })
+  async findDrafts() {
+    const drafts = await this.articlesService.findDrafts();
+    return drafts.map((draft) => new ArticleEntity(draft));
   }
 
   @Get(':id')
   @ApiOkResponse({ type: ArticleEntity, isArray: true })
   async findOne(@Param('id') id: string) {
-    return await this.articlesService.findOne(id);
+    return new ArticleEntity(await this.articlesService.findOne(id));
   }
 
   @Patch(':id')
@@ -53,12 +57,14 @@ export class ArticlesController {
     @Param('id') id: string,
     @Body() updateArticleDto: UpdateArticleDto,
   ) {
-    return await this.articlesService.update(id, updateArticleDto);
+    return new ArticleEntity(
+      await this.articlesService.update(id, updateArticleDto),
+    );
   }
 
   @Delete(':id')
   @ApiNoContentResponse({})
   async remove(@Param('id') id: string) {
-    return await this.articlesService.remove(id);
+    return new ArticleEntity(await this.articlesService.remove(id));
   }
 }
