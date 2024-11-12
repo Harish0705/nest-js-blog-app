@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -6,30 +6,42 @@ import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class ArticlesService {
   constructor(private prisma: PrismaService) {}
-  create(createArticleDto: CreateArticleDto) {
+  async create(createArticleDto: CreateArticleDto) {
     return this.prisma.article.create({ data: createArticleDto });
   }
 
-  findDrafts() {
+  async findDrafts() {
     return this.prisma.article.findMany({ where: { published: false } });
   }
 
-  findAll() {
+  async findAll() {
     return this.prisma.article.findMany({ where: { published: true } });
   }
 
-  findOne(id: string) {
-    return this.prisma.article.findUnique({ where: { id } });
+  async findOne(id: string) {
+    const article = await this.prisma.article.findUnique({ where: { id } });
+    if (!article) {
+      throw new NotFoundException(`Article with ${id} does not exist.`);
+    }
+    return article;
   }
 
-  update(id: string, updateArticleDto: UpdateArticleDto) {
+  async update(id: string, updateArticleDto: UpdateArticleDto) {
+    const article = await this.prisma.article.findUnique({ where: { id } });
+    if (!article) {
+      throw new NotFoundException(`Article with ${id} does not exist.`);
+    }
     return this.prisma.article.update({
       where: { id },
       data: updateArticleDto,
     });
   }
 
-  remove(id: string) {
+  async remove(id: string) {
+    const article = await this.prisma.article.findUnique({ where: { id } });
+    if (!article) {
+      throw new NotFoundException(`Article with ${id} does not exist.`);
+    }
     return this.prisma.article.delete({ where: { id } });
   }
 }

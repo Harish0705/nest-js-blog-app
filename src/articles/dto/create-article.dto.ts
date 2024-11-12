@@ -24,6 +24,7 @@ export class CreateArticleDto {
 
   @IsString()
   @IsNotEmpty()
+  @ApiProperty({ required: false })
   body: string;
 
   @IsBoolean()
